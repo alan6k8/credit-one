@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use Alan6k8\CreditOne\Repository\ModuleFunctionRepository;
-use Alan6k8\CreditOne\Repository\UserAccessRepository;
+use Alan6k8\CreditOne\Repository\ModuleFunctionAccessRightRepository;
 use Alan6k8\CreditOne\Repository\UserRepository;
 use Alan6k8\CreditOne\Service\User\ModuleFunctionAccessResolver;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 /*
- * As there is no templating engine, I'll simply echo in this file.
+ * As there is no template engine, I'll simply echo in this file.
  * Also, there is no DI package nor I am going to implement factories to keep it simple.
  */
 
@@ -33,31 +33,33 @@ if (isset($_POST['process'])) {
     if ($username === '') {
         throw new InvalidArgumentException('Missing mandatory param: username');
     }
-    $moduleFunction = (string)($_POST['function'] ?? '');
-    if ($moduleFunction === '') {
+    $moduleFunctionName = (string)($_POST['function'] ?? '');
+    if ($moduleFunctionName === '') {
         throw new InvalidArgumentException('Missing mandatory param: function');
     }
 
     $accessResolver = new ModuleFunctionAccessResolver(
-        new UserAccessRepository(),
+        new UserRepository(),
+        new ModuleFunctionRepository(),
+        new ModuleFunctionAccessRightRepository(),
     );
 
     try {
-        $isAuthorized = $accessResolver->resolve($username, $moduleFunction);
+        $isAuthorized = $accessResolver->resolve($username, $moduleFunctionName);
         if ($isAuthorized) {
-            echo "<div class =\"success\">User {$username} has access to {$moduleFunction}</div><br>";
+            echo "<div class =\"success\">User {$username} has access to {$moduleFunctionName}</div><br>";
         } else {
-            echo "<div class=\"danger\">User {$username} does not have access to {$moduleFunction}</div><br>";
+            echo "<div class=\"danger\">User {$username} does not have access to {$moduleFunctionName}</div><br>";
         }
     } catch (Throwable $e) {
         echo '<div class="danger">';
-        echo "Failed to tell whether user {$username} has access to {$moduleFunction}<br>";
+        echo "Failed to tell whether user {$username} has access to {$moduleFunctionName}<br>";
         echo 'Reason: ' . $e->getMessage();
         echo '</div><br>';
     }
 }
 
-// form (used simple indetation just to make it easier to read)
+// form (used simple indentation just to make it easier to read)
 $userRepo = new UserRepository();
 $moduleFunctionsRepo = new ModuleFunctionRepository();
 
@@ -66,14 +68,16 @@ echo '
         <label for="username">Username:</label>
         <select name="username" id="username">';
     foreach ($userRepo->findAll() as $user) {
-        echo "<option value=\"{$user->username}\">{$user->username}</option>";
+        $selected = isset($username) && $username === $user->username ? 'selected="selected" ' : '';
+        echo "<option {$selected}value=\"{$user->username}\">{$user->username}</option>";
     }
 echo '
         </select>
         <label for="function">Function:</label>
         <select name="function" id="function">';
     foreach ($moduleFunctionsRepo->findAll() as $moduleFunction) {
-        echo "<option value=\"{$moduleFunction->name}\">{$moduleFunction->name}</option>";
+        $selected = isset($username) && $moduleFunctionName === $moduleFunction->name ? 'selected="selected" ' : '';
+        echo "<option {$selected}value=\"{$moduleFunction->name}\">{$moduleFunction->name}</option>";
     }
 echo '
         </select>

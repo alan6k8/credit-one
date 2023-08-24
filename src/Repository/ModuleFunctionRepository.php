@@ -22,12 +22,29 @@ class ModuleFunctionRepository extends AbstractRepository
             throw new RuntimeException('Failed to fetch module functions');
         }
 
-        /** @var array{name: string, modules_id: int} $row */
+        /** @var array{id: int, name: string, modules_id: int} $row */
         foreach ($statement as $row) {
             $collection->add($this->deserialize($row));
         }
 
         return $collection;
+    }
+
+    public function findOneByName(string $name): ?ModuleFunction
+    {
+        $connection = $this->getConnection();
+        $sql = "SELECT * FROM `{$this->getTableName()}` WHERE `name` = '{$name}'";
+        $statement = $connection->query($sql);
+        if ($statement === false) {
+            throw new RuntimeException('Failed to fetch module function by name');
+        }
+
+        /** @var array{id: int, name: string, modules_id: int} $row */
+        foreach ($statement as $row) {
+            return $this->deserialize($row);
+        }
+
+        return null;
     }
 
     protected function getTableName(): string
@@ -36,11 +53,12 @@ class ModuleFunctionRepository extends AbstractRepository
     }
 
     /**
-     * @param array{name: string, modules_id: int} $data
+     * @param array{id: int, name: string, modules_id: int} $data
      */
     private function deserialize(array $data): ModuleFunction
     {
         return new ModuleFunction(
+            $data['id'],
             $data['name'],
             $data['modules_id'],
         );

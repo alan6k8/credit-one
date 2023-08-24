@@ -23,4 +23,9 @@ class ModuleFunctionCollection extends AbstractCollection
     {
         $this->items[$model->name] = $model;
     }
+
+    public function current(): ModuleFunction
+    {
+        return current($this->items);
+    }
 }

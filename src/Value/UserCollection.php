@@ -23,4 +23,9 @@ class UserCollection extends AbstractCollection
     {
         $this->items[$model->username] = $model;
     }
+
+    public function current(): User
+    {
+        return current($this->items);
+    }
 }
