@@ -1,0 +1,3 @@
+parameters:
+    # resolves: Class Alan6k8\CreditOne\Value\AbstractCollection implements generic interface Iterator but does not specify its types: TKey, TValue
+    checkGenericClassInNonGenericObjectType: false

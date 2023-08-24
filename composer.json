@@ -1,0 +1,30 @@
+{
+    "name": "alan6k8/credit-one",
+    "type": "project",
+    "description": "Just an example implementation of access controll",
+    "homepage": "https://github.com/alan6k8/credit-one",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alan Rusek",
+            "email": "alan6k8@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Alan6k8\\CreditOne\\" : "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "php": ">=8.1",
+        "phpstan/phpstan": "^1.4"
+    },
+    "scripts": {
+        "phpstan": [
+            "vendor/bin/phpstan --memory-limit=-1 analyse -l8 src"
+        ]
+    }
+}
