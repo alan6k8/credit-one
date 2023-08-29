@@ -1,4 +1,4 @@
-# Example access control mechanism for CreditOne
+# Example access control mechanism for CreditOnline
 ## Description of implementation
 Works as web application - basically a simple form.
 
